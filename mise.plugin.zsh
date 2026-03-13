@@ -12,13 +12,13 @@
 #
 # Long description TBD.
 #
-# ### State Variables
-#
-# * **MISE_PATH**: The absolute path to the plugin's file.
-#
 # ### Public Variables
 #
 # * **MISE_EXAMPLE**: if set it does something magical.
+#
+# ### State Variables
+#
+# * **MISE_PLUGIN_PATH**: The absolute path to the plugin's file.
 #
 
 ###################################################################################################
@@ -51,10 +51,10 @@ mise_plugin_init() {
 
     local mise_path="$(homebrew_formula_prefix mise)"
 
-    if [[ -n "${cask_path}" ]]; then
-        @completion_generate_local_file mise "${MISE_PLUGIN_PATH}" mise completion zsh
+    if [[ -n "${mise_path}" ]]; then
+        @completion_generate_local_file_from mise completion zsh
     else
-        log-error "zsh-mise: the Homebrew formula 'mise' does not seem to be installed."
+        log_error "zsh-mise: the Homebrew formula 'mise' does not seem to be installed."
         return 2
     fi
 }
