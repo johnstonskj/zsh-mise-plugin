@@ -12,21 +12,11 @@
 #
 # Long description TBD.
 #
-# ### Public Variables
-#
-# * **MISE_EXAMPLE**: if set it does something magical.
-#
-# ### State Variables
-#
-# * **MISE_PLUGIN_PATH**: The absolute path to the plugin's file.
-#
 
-###################################################################################################
-# @section Setup
-# @description Standard path and variable setup.
-#
+typeset -gi EC_SUCCESS
+typeset -gi EC_NOT_INSTALLED_ERROR
 
-MISE_PLUGIN_PATH="$(@zplugins_normalize_zero "$0")"
+typeset -g MISE_ENV
 
 ###################################################################################################
 # @section Lifecycle
@@ -49,25 +39,13 @@ mise_plugin_init() {
     builtin emulate -L zsh
     builtin setopt extended_glob warn_create_global typeset_silent no_short_loops rc_quotes no_auto_pushd
 
-    local mise_path="$(homebrew_formula_prefix mise)"
+    MISE_ENV=${MISE_ENV:-}
 
-    if [[ -n "${mise_path}" ]]; then
+    if homebrew_formula_exists mise; then
         @completion_generate_local_file_from mise completion zsh
+        return ${EC_SUCCESS}
     else
         log_error "zsh-mise: the Homebrew formula 'mise' does not seem to be installed."
-        return 2
+        return ${EC_NOT_INSTALLED_ERROR}
     fi
-}
-
-#
-# @description
-#
-# Called when the plugin is unloaded to clean up after itself.
-#
-# @noargs
-#
-mise_plugin_unload() {
-    builtin emulate -L zsh
-
-    unset MISE_PLUGIN_PATH
 }
